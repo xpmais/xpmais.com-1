@@ -1,4 +1,4 @@
-import { loadEnv, defineConfig } from '@medusajs/utils'
+import { loadEnv, defineConfig, Modules } from '@medusajs/utils'
 
 loadEnv(process.env.NODE_ENV, process.cwd())
 
@@ -12,6 +12,25 @@ module.exports = defineConfig({
       jwtSecret: process.env.JWT_SECRET || "supersecret",
       cookieSecret: process.env.COOKIE_SECRET || "supersecret",
     }
+  }
+  ,
+
+  modules: {
+    [Modules.PAYMENT]: {
+      resolve: "@medusajs/payment",
+      options: {
+        providers: [
+          {
+            resolve: "@medusajs/payment-stripe",
+            id: "stripe",
+            options: {
+              api_key: process.env.STRIPE_API_KEY,
+              webhook_secret: process.env.STRIPE_WEBHOOK_SECRET,
+            },
+          },
+        ],
+      },
+    },
   }
 })
 
